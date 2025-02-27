@@ -1,0 +1,7 @@
+<!-- app/views/qrcodes/show.html.erb -->
+<% if @qr_code %>
+  <h2>QR Code for <%= @student.name %></h2>
+  <%= image_tag @qr_code.as_png(size: 300).to_data_url %> <!-- Display the QR code as an image -->
+<% else %>
+  <p>QR Code could not be generated.</p>
+<% end %>
