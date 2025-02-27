@@ -7,12 +7,16 @@ class SessionsController < ApplicationController
 
   def create
     if user = User.authenticate_by(params.permit(:email_address, :password))
-      start_new_session_for user
+      # Store the user_id in the session
+      Rails.logger.debug "Authenticated User ID: #{user.id}"
+      session[:user_id] = user.id  # Store the user's ID in the session
+      start_new_session_for user     # Continue with session initialization (if applicable)
       redirect_to after_authentication_url
     else
       redirect_to new_session_path, alert: "Try another email address or password."
     end
   end
+  
 
   def destroy
     terminate_session

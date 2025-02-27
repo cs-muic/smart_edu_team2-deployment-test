@@ -19,8 +19,8 @@
       <li><%= link_to attendances_path do %>
           <i class="fas fa-list"></i> List Attendances
         <% end %></li>
-        <li><%= link_to "/qrcodes/1" do %>
-          <i class="fas fa-qrcode"></i> Generate QR Code
+        <li><%= link_to "/qrcodes/" do %>
+          <i class="fas fa-qrcode"></i> My QR code
         <% end %></li>
       <li><%= link_to session_path, data: {turbo_method: :delete} do %>
           <i class="fas fa-sign-out-alt"></i> Logout

@@ -1,7 +1,16 @@
 <!-- app/views/qrcodes/show.html.erb -->
-<% if @qr_code %>
-  <h2>QR Code for <%= @student.name %></h2>
-  <%= image_tag @qr_code.as_png(size: 300).to_data_url %> <!-- Display the QR code as an image -->
-<% else %>
-  <p>QR Code could not be generated.</p>
-<% end %>
+<% content_for :title, "Your QR Code" %>
+<div class="flex items-center justify-center min-h-[calc(100vh-64px)]">
+  <div class="stats shadow text-3xl">
+    <div class="stat">
+      <div class="stat-figure text-secondary">
+        <i class="fa-solid fa-qrcode"></i>
+      </div>
+      <div class="stat-title">Your QR Code</div>
+      <div class="stat-value">
+        <%= raw @qr_code %>  <!-- Render the SVG QR code -->
+      </div>
+      <div class="stat-desc">Scan this QR code for your ID</div>
+    </div>
+  </div>
+</div>
