@@ -3,6 +3,7 @@
 # Table name: users
 #
 #  id              :integer          not null, primary key
+#  discarded_at    :datetime
 #  email_address   :string           not null
 #  is_active       :boolean          default(TRUE)
 #  password_digest :string           not null
@@ -11,6 +12,7 @@
 #
 # Indexes
 #
+#  index_users_on_discarded_at   (discarded_at)
 #  index_users_on_email_address  (email_address) UNIQUE
 #
 class User < ApplicationRecord
@@ -20,4 +22,17 @@ class User < ApplicationRecord
   normalizes :email_address, with: ->(e) { e.strip.downcase }
   validates :email_address, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, presence: true, length: { minimum: 8, maximum: 20 }
+
+  include Discard::Model
+
+  private
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[email_address]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    []
+  end
+
 end

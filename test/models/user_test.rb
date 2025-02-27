@@ -3,6 +3,7 @@
 # Table name: users
 #
 #  id              :integer          not null, primary key
+#  discarded_at    :datetime
 #  email_address   :string           not null
 #  is_active       :boolean          default(TRUE)
 #  password_digest :string           not null
@@ -11,6 +12,7 @@
 #
 # Indexes
 #
+#  index_users_on_discarded_at   (discarded_at)
 #  index_users_on_email_address  (email_address) UNIQUE
 #
 require "test_helper"
