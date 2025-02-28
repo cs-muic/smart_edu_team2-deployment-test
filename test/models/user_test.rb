@@ -4,6 +4,8 @@
 #
 #  id              :integer          not null, primary key
 #  email_address   :string           not null
+#  first_name      :string
+#  last_name       :string
 #  password_digest :string           not null
 #  role            :string           default("unassigned")
 #  created_at      :datetime         not null
