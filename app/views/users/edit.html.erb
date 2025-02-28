@@ -1,0 +1,24 @@
+<% content_for :title, "Edit User Role" %>
+<div class="flex justify-center items-center min-h-[calc(100vh-64px)]">
+  <div class="max-w-md w-full bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4">Edit Role for <%= @user.email_address %></h2>
+
+    <%= form_with(model: @user, local: true) do |form| %>
+        <div class="field">
+          <%= form.label :email_address %>
+          <%= form.text_field :email_address, disabled: true %>  <!-- Prevent users from changing the email -->
+        </div>
+      
+        <div class="field">
+          <%= form.label :role %>
+          <%= form.select :role, User::ROLES, selected: @user.role %>
+        </div>
+      
+        <div class="actions">
+          <%= form.submit "Save Changes" %>
+        </div>
+      <% end %>
+      
+      
+  </div>
+</div>

@@ -10,4 +10,6 @@ Rails.application.routes.draw do
   root "home#index"
 
   get 'qrcodes', to: 'qrcodes#show'  # Updated route for the QR code
+
+  resources :users, only: [:index, :edit, :update]
 end
