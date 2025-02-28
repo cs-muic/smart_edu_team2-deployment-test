@@ -21,10 +21,16 @@ class User < ApplicationRecord
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
   validates :email_address, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :password, presence: true, length: { minimum: 8, maximum: 20 }
+  validates :password, presence: true, length: { minimum: 8, maximum: 20 }, if: :password_required?
   validates :role, presence: true, inclusion: { in: ROLES }
 
   after_initialize do
     self.role ||= "unassigned" if new_record?
+  end
+
+  private
+
+  def password_required?
+    new_record? || password.present?
   end
 end
