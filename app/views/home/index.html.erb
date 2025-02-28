@@ -18,7 +18,7 @@
       <div class="stat-desc">Last Check In <%= @last_checkin.nil? ? 'N/A' : time_ago_in_words(@last_checkin) %></div>
     </div>
     <% if current_user %>
-  <p>Current User ID: <%= current_user.id %></p>
+  <p>Current User role: <%= current_user.role %></p>
 <% else %>
   <p>User not logged in</p>
 <% end %>
