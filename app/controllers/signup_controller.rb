@@ -8,8 +8,12 @@ class SignupController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      start_new_session_for @user
-      redirect_to after_authentication_url
+      if params[:is_signup] == "true"
+        start_new_session_for @user
+        redirect_to after_authentication_url
+      else
+        notice: "User was successfully created by the admin."
+      end
     else
       render :new, status: :unprocessable_entity
     end
