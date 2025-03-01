@@ -20,4 +20,8 @@ class QrcodesController < ApplicationController
       standalone: true
     )
   end
+
+  def scan
+  end
+
 end

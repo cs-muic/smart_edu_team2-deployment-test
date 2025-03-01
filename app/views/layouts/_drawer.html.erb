@@ -25,6 +25,9 @@
         <li><%= link_to "/qrcodes/" do %>
           <i class="fas fa-qrcode"></i> My QR code
         <% end %></li>
+        <li><%= link_to "/scan_qr" do %>
+          <i class="fa-solid fa-magnifying-glass"></i> QR Scan
+        <% end %></li>
       <li><%= link_to session_path, data: {turbo_method: :delete} do %>
           <i class="fas fa-sign-out-alt"></i> Logout
         <% end %></li>
