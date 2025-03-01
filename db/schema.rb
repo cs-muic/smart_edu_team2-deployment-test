@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_28_150108) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_01_060720) do
   create_table "attendances", force: :cascade do |t|
     t.integer "student_id", null: false
     t.datetime "timestamp"
@@ -47,7 +47,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_28_150108) do
     t.string "role", default: "unassigned"
     t.string "first_name"
     t.string "last_name"
+    t.string "uuid"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index ["uuid"], name: "index_users_on_uuid", unique: true
   end
 
   add_foreign_key "attendances", "students"

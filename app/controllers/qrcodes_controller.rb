@@ -2,7 +2,7 @@
 class QrcodesController < ApplicationController
   def show
     if current_user
-      @qr_code = generate_qr_code(current_user.id)  # Generate QR code for the current user's ID
+      @qr_code = generate_qr_code(current_user.uuid)  # Generate QR code for the current user's ID
     else
       redirect_to new_session_path, alert: 'Please log in to view your QR code.'
     end

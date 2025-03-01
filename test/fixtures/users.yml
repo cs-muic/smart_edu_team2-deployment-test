@@ -10,12 +10,14 @@
 #  last_name       :string
 #  password_digest :string           not null
 #  role            :string           default("unassigned")
+#  uuid            :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #
 # Indexes
 #
 #  index_users_on_email_address  (email_address) UNIQUE
+#  index_users_on_uuid           (uuid) UNIQUE
 #
 one:
   email_address: one@example.com
