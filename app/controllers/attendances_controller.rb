@@ -1,6 +1,7 @@
 class AttendancesController < ApplicationController
-  before_action :set_attendance, only: %i[ show edit update destroy ]
+  before_action :set_attendance, only: %i[show edit update destroy]
   include Pagy::Backend
+
   # GET /attendances or /attendances.json
   def index
     @pagy, @attendances = pagy(Attendance.all)
@@ -27,14 +28,29 @@ class AttendancesController < ApplicationController
 
   # POST /attendances or /attendances.json
   def create
-    p = params.permit(:student_id).merge(user_id: Current.user.id, timestamp: Time.zone.now)
-    @attendance = Attendance.new(p)
-    @attendance.save!
-    respond_to do |format|
-      format.html { redirect_to new_attendance_path(request.parameters) } # For normal page loads
-      format.turbo_stream { redirect_to new_attendance_path(request.parameters) }# For Turbo-powered live updates
+    timezone = cookies[:timezone] || "UTC"  # Read timezone from cookies
+  
+    Time.use_zone(timezone) do  # Temporarily set Rails timezone
+      p = params.permit(:student_id).merge(
+        user_id: Current.user.id,
+        timestamp: Time.current  # This now respects the user's timezone
+      )
+  
+      @attendance = Attendance.new(p)
+  
+      if @attendance.save
+        respond_to do |format|
+          format.html { redirect_to new_attendance_path(request.parameters) }  
+          format.turbo_stream { redirect_to new_attendance_path(request.parameters) }
+        end
+      else
+        flash[:error] = "Failed to save attendance."
+        redirect_to new_attendance_path(request.parameters)
+      end
     end
   end
+  
+  
 
   # PATCH/PUT /attendances/1 or /attendances/1.json
   def update
@@ -62,11 +78,11 @@ class AttendancesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_attendance
-      @attendance = Attendance.find(params.expect(:id))
+      @attendance = Attendance.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def attendance_params
-      params.expect(attendance: [ :student_id, :timestamp, :user_id ])
+      params.require(:attendance).permit(:student_id, :timestamp, :user_id)
     end
 end
