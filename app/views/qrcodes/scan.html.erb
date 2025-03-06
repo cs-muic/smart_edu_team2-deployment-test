@@ -2,10 +2,38 @@
 <div class="scanner-container">
   <div id="reader"></div>
   <p>Scanned QR Code: <span id="result">Waiting for scan...</span></p>
+  <button id="stopScanner" class="btn btn-danger">Close Camera</button>
 </div>
 
 <!-- Include html5-qrcode library -->
 <script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+let html5QrcodeScanner = new Html5QrcodeScanner("reader", {
+  fps: 10,
+  qrbox: { width: 250, height: 250 }
+});
+
+function onScanSuccess(decodedText, decodedResult) {
+  console.log("Scanned QR Code:", decodedText);
+  document.getElementById("result").innerText = decodedText;
+  sendQRCodeToServer(decodedText);
+}
+
+function onScanFailure(error) {
+  console.warn("QR Code scan error:", error);
+}
+
+// Start Scanner
+html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+// Close Scanner
+document.getElementById("stopScanner").addEventListener("click", function() {
+  html5QrcodeScanner.clear()
+      .then(() => console.log("Scanner Stopped"))
+      .catch(err => console.error("Error stopping scanner:", err));
+});
+</script>
+
 
 <style>
   .scanner-container {
