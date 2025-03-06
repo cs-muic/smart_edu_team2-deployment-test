@@ -1,39 +1,78 @@
 <h1>QR Code Scanner</h1>
 <div class="scanner-container">
+  <button id="start-btn">Start Camera</button>
+  <button id="stop-btn">Stop Camera</button>
   <div id="reader"></div>
-  <p>Scanned QR Code: <span id="result">Waiting for scan...</span></p>
-  <button id="stopScanner" class="btn btn-danger">Close Camera</button>
+  <p>Scanned Result: <span id="result"></span></p>
 </div>
 
 <!-- Include html5-qrcode library -->
 <script src="https://unpkg.com/html5-qrcode"></script>
+
 <script>
-let html5QrcodeScanner = new Html5QrcodeScanner("reader", {
-  fps: 10,
-  qrbox: { width: 250, height: 250 }
-});
+let scanner;
 
-function onScanSuccess(decodedText, decodedResult) {
-  console.log("Scanned QR Code:", decodedText);
-  document.getElementById("result").innerText = decodedText;
-  sendQRCodeToServer(decodedText);
+function startScanner() {
+  if (!scanner) {
+    scanner = new Html5Qrcode("reader");
+  }
+
+  scanner.start(
+    { facingMode: "environment" }, 
+    { fps: 10, qrbox: 250 },
+    (decodedText) => {
+      console.log("QR Code Scanned:", decodedText);
+      document.getElementById("result").innerText = decodedText;
+      markAttendance(decodedText);
+      stopScanner(); // Stop scanning after success
+    },
+    (errorMessage) => {
+      console.log("Scanning error:", errorMessage);
+    }
+  ).catch((err) => {
+    console.error("Error starting scanner:", err);
+  });
 }
 
-function onScanFailure(error) {
-  console.warn("QR Code scan error:", error);
+function stopScanner() {
+  if (scanner) {
+    scanner.stop()
+      .then(() => {
+        console.log("Scanner stopped.");
+      })
+      .catch((err) => {
+        console.error("Error stopping scanner:", err);
+      });
+  }
 }
 
-// Start Scanner
-html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+// Function to send scanned data for attendance
+const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+function markAttendance(scannedData) {
+    fetch("/attendances", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "X-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ student_id: scannedData })  // Fix variable name
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => { throw new Error(text); });
+        }
+        return response.json();
+    })
+    .then(data => console.log("Success:", data))
+    .catch(error => console.error("Error:", error));
+}
 
-// Close Scanner
-document.getElementById("stopScanner").addEventListener("click", function() {
-  html5QrcodeScanner.clear()
-      .then(() => console.log("Scanner Stopped"))
-      .catch(err => console.error("Error stopping scanner:", err));
-});
+// Attach to buttons
+document.getElementById("start-btn").addEventListener("click", startScanner);
+document.getElementById("stop-btn").addEventListener("click", stopScanner);
+
 </script>
-
 
 <style>
   .scanner-container {
@@ -44,8 +83,8 @@ document.getElementById("stopScanner").addEventListener("click", function() {
   }
 
   #reader {
-    width: 300px !important;  /* Set fixed width */
-    max-width: 100%;          /* Ensure responsiveness */
+    width: 300px !important;
+    max-width: 100%;
     border: 2px solid #333;
     border-radius: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
@@ -59,20 +98,3 @@ document.getElementById("stopScanner").addEventListener("click", function() {
     margin-top: 10px;
   }
 </style>
-
-<script>
-  function onScanSuccess(decodedText, decodedResult) {
-    document.getElementById("result").innerText = decodedText;
-  }
-
-  function onScanFailure(error) {
-    console.warn(`QR Code scan error: ${error}`);
-  }
-
-  let html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
-    fps: 10, 
-    qrbox: { width: 250, height: 250 } // Adjust QR code box size
-  });
-
-  html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-</script>

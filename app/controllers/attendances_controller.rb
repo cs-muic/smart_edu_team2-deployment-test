@@ -28,27 +28,30 @@ class AttendancesController < ApplicationController
 
   # POST /attendances or /attendances.json
   def create
-    timezone = cookies[:timezone] || "UTC"  # Read timezone from cookies
+    timezone = cookies[:timezone] || "UTC"
   
-    Time.use_zone(timezone) do  # Temporarily set Rails timezone
+    Time.use_zone(timezone) do
       p = params.permit(:student_id).merge(
-        user_id: Current.user.id,
-        timestamp: Time.current  # This now respects the user's timezone
+        user_id: Current.user&.id,  # Prevent nil user error
+        timestamp: Time.current
       )
   
       @attendance = Attendance.new(p)
   
       if @attendance.save
         respond_to do |format|
-          format.html { redirect_to new_attendance_path(request.parameters) }  
-          format.turbo_stream { redirect_to new_attendance_path(request.parameters) }
+          format.html { redirect_to new_attendance_path(request.parameters), notice: "Attendance recorded." }
+          format.json { render json: { message: "Attendance successfully recorded." }, status: :created }
         end
       else
-        flash[:error] = "Failed to save attendance."
-        redirect_to new_attendance_path(request.parameters)
+        respond_to do |format|
+          format.html { redirect_to new_attendance_path(request.parameters), alert: "Failed to save attendance." }
+          format.json { render json: { error: @attendance.errors.full_messages.to_sentence }, status: :unprocessable_entity }
+        end
       end
     end
   end
+  
   
   
 
