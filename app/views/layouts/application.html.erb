@@ -21,11 +21,13 @@
   </head>
   <body>
     <% if authenticated? %>
-      <%= render "layouts/nav"%>
+    <%= link_to "Upgrade to Premium", new_payment_path, class: "btn btn-primary" %>
+    <%= render "layouts/nav"%>
       <%= render "layouts/drawer" do %>
         <%= yield %>
       <% end %>
     <% else%>
       <%= yield %>
     <% end %>
+  </body>
   </html>
