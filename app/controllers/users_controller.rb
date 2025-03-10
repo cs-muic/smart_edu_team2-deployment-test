@@ -1,7 +1,14 @@
 class UsersController < ApplicationController
+    include Pagy::Backend
     def index
-      @users = User.all
+      # @users = User.all
+      @pagy, @users = pagy(User.all)
     end
+
+    # # GET /users/new
+    # def new
+    #   @user = User.new
+    # end
 
     def edit
       @user = User.find(params[:id])
