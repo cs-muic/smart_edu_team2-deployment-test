@@ -22,7 +22,7 @@ module SmartEdu
     # in config/environments, which are processed later.
     #
     config.time_zone = "Asia/Bangkok"  # Set the time zone to Bangkok
-    config.active_record.default_timezone = :local  # Store time in UTC in the database  
+    config.active_record.default_timezone = :local  # Store time in UTC in the database
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end
