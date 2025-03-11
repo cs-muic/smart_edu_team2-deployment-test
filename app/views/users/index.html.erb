@@ -14,6 +14,8 @@
         <th></th>
         <th>ID</th>
         <th>Email</th>
+        <th>Role</th>
+        <th>UUID</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -23,6 +25,8 @@
           <td></td>
           <td><%= user.id%></td>
           <td><%= user.email_address%></td>
+          <td><%= user.role%></td>
+          <td><%= user.uuid%></td>
           <td>
             <div class="flex space-x-2">
               <%= link_to user, class: "hover:text-blue-500 text-blue-700" do %>
