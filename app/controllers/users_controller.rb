@@ -63,6 +63,11 @@ class UsersController < ApplicationController
     private
 
     def user_params
-      params.require(:user).permit(:email_address, :password, :password_confirmation, :role)
+      if current_user.role == "admin"
+        params.require(:user).permit(:email_address, :password, :password_confirmation, :role)
+        # params.require(:user).permit(:email_address, :password, :password_confirmation)
+      else
+        params.require(:user).permit(:email_address, :password, :password_confirmation)
+      end
     end
 end
