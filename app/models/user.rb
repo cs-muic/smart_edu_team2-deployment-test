@@ -30,7 +30,7 @@ class User < ApplicationRecord
   validates :role, presence: true, inclusion: { in: ROLES }
   validates :uuid, presence: true, uniqueness: true
 
-  before_validation :generate_uuid, on: :create
+  before_validation :set_default_uuid, if: -> { uuid.blank? }
 
   after_initialize do
     self.role ||= "unassigned" if new_record?
@@ -38,8 +38,8 @@ class User < ApplicationRecord
 
   private
 
-  def generate_uuid
-    self.uuid ||= SecureRandom.uuid
+  def set_default_uuid
+    self.uuid = SecureRandom.uuid if uuid.blank?
   end
 
   def password_required?
