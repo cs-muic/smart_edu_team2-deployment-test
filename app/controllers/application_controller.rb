@@ -6,4 +6,50 @@ class ApplicationController < ActionController::Base
     @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
   end
   helper_method :current_user  # Make it accessible in views
+  # check the user's role
+  def require_admin
+    unless admin?
+      flash[:alert] = "You must be an admin to access requested page."
+      redirect_to root_path
+    end
+  end
+
+  def require_teacher
+    unless teacher?
+      flash[:alert] = "You must be a teacher to access requested page."
+      redirect_to root_path
+    end
+  end
+
+  def require_student
+    unless student?
+      flash[:alert] = "You must be a student to access requested page."
+      redirect_to root_path
+    end
+  end
+
+  def require_unassigned
+    unless unassigned?
+      flash[:alert] = "You must be an unassigned to access requested page."
+      redirect_to root_path
+    end
+  end
+
+  helper_method :admin?, :teacher?, :student?
+
+  def admin?
+    current_user&.role == "admin"
+  end
+
+  def teacher?
+    current_user&.role == "teacher"
+  end
+
+  def student?
+    current_user&.role == "student"
+  end
+
+  def unassigned?
+    current_user&.role == "unassigned"
+  end
 end
