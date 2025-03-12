@@ -1,6 +1,7 @@
 # app/controllers/qrcodes_controller.rb
 class QrcodesController < ApplicationController
   def show
+    require_student
     if current_user
       @qr_code = generate_qr_code(current_user.id)  # Generate QR code for the current user's ID
     else
@@ -8,8 +9,12 @@ class QrcodesController < ApplicationController
     end
   end
 
+  def scan
+    require_teacher
+  end
+  
   private
-
+  
   def generate_qr_code(user_id)
     # Here, use a gem like 'rqrcode' to generate the QR code from the user_id
     RQRCode::QRCode.new(user_id.to_s).as_svg(
@@ -21,6 +26,4 @@ class QrcodesController < ApplicationController
     )
   end
 
-  def scan
-  end
 end
