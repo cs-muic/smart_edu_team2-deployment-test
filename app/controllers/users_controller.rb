@@ -2,7 +2,6 @@ class UsersController < ApplicationController
     before_action :require_admin # Only admins can access this controller
     include Pagy::Backend
     def index
-      flash.notice = current_user.role
       @pagy, @users = pagy(User.all)
     end
 
