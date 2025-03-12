@@ -1,12 +1,7 @@
 class UsersController < ApplicationController
+    before_action :require_admin # Only admins can access this controller
     include Pagy::Backend
     def index
-      # @users = User.all
-      # if current_user.role == "admin"
-      #   flash.notice = "is admin"
-      # else
-      #   flash.notice = "is not admin"
-      # end
       flash.notice = current_user.role
       @pagy, @users = pagy(User.all)
     end
@@ -63,7 +58,7 @@ class UsersController < ApplicationController
     private
 
     def user_params
-      if current_user.role == "admin"
+      if admin?
         params.require(:user).permit(:email_address, :password, :password_confirmation, :role)
         # params.require(:user).permit(:email_address, :password, :password_confirmation)
       else
