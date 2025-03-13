@@ -31,7 +31,7 @@ class AttendancesController < ApplicationController
     timezone = cookies[:timezone] || "UTC"
   
     Time.use_zone(timezone) do
-      p = params.permit(:student_id).merge(
+      p = params.permit(:user_id).merge(
         user_id: Current.user&.id,  # Prevent nil user error
         timestamp: Time.current
       )
