@@ -42,7 +42,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  helper_method :admin?, :teacher?, :student?
+  helper_method :admin?, :owner?, :teacher?, :student?, :unassigned?
 
   def admin?
     current_user&.role == "admin"
