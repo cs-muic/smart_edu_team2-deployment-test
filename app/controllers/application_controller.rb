@@ -14,6 +14,13 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def require_owner
+    unless owner?
+      flash[:alert] = "You must be an owner to access requested page."
+      redirect_to root_path
+    end
+  end
+
   def require_teacher
     unless teacher?
       flash[:alert] = "You must be a teacher to access requested page."
@@ -39,6 +46,10 @@ class ApplicationController < ActionController::Base
 
   def admin?
     current_user&.role == "admin"
+  end
+
+  def owner?
+    current_user&.role == "owner"
   end
 
   def teacher?
