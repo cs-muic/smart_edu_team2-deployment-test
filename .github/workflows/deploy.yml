@@ -3,15 +3,19 @@ name: Deploy
 concurrency: production-deployment
 
 on:
-  pull_request:
-  push:
-    branches: 
-        - main
-        - dev
+  # pull_request:
+  # push:
+  # trigger run when [CI] action is [completed] (check if success later on jobs) on [main]
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
 
 jobs:
   deployment:
     runs-on: ubuntu-latest
+    # runs if CI tests passes
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
