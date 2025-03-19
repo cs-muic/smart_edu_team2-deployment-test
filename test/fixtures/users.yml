@@ -23,14 +23,20 @@
 one:
   email_address: one@example.com
   password_digest: <%= password_digest %>
+  role: unassigned
+  uuid: <%= SecureRandom.uuid %>
 
 two:
   email_address: two@example.com
   password_digest: <%= password_digest %>
+  role: unassigned
+  uuid: <%= SecureRandom.uuid %>
 
 three:
   email_address: a@a.com
   password_digest: <%= password_digest %>
+  role: unassigned
+  uuid: <%= SecureRandom.uuid %>
 
 adminA:
   email_address: admina1@test.com
