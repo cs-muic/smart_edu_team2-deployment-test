@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get "subscriptions/index"
+  get "subscriptions/show"
+  get "subscriptions/new"
+  get "subscriptions/create"
   get "payments/new"
   get "payments/create"
   get "payments/show"
@@ -20,4 +24,12 @@ Rails.application.routes.draw do
   resources :payments, only: [:new, :create, :show]
   get 'payment_success', to: 'payments#success'
   get 'payment_failure', to: 'payments#failure'
+
+  resources :subscriptions, only: [:index, :new, :create, :show] do
+    post 'cancel', on: :member
+  end
+  resources :payments, only: [:new, :create, :show]
+  get 'payment_success', to: 'payments#success'
+  get 'payment_failure', to: 'payments#failure'
+  post 'omise_webhook', to: 'payments#webhook'
 end
