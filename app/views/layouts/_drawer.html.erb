@@ -13,7 +13,7 @@
         <% end %>
       </li>
 
-      <% if admin? || teacher? %>
+      <% if teacher? %>
         <li>
           <%= link_to students_path do %>
             <i class="fas fa-user-graduate"></i> Manage Student
