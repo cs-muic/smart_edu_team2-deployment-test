@@ -3,29 +3,29 @@ name: Deploy
 concurrent: production-deployment
 
 on:
-    pull_request:
-    push:
-        branches: 
-            - main
-            - dev
+  pull_request:
+  push:
+    branches: 
+        - main
+        - dev
 
 jobs:
-    deployment:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-                uses: actions/checkout@v4
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
             
-            - name: Setup secrets keys
-                run: echo "${{ secrets.MASTER_KEY }}" > config/master.key
-                run: echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" > secret/kamal_reg_pass.key
+    - name: Setup secrets keys
+      run: echo "${{ secrets.MASTER_KEY }}" > config/master.key
+      run: echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" > secret/kamal_reg_pass.key
                 
-            - name: Setup SSH keys
-                uses: webfactory/ssh-agent@v0.9.0
-                    with: 
-                        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-                        log-public-key: false
+    - name: Setup SSH keys
+      uses: webfactory/ssh-agent@v0.9.0
+      with: 
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        log-public-key: false
 
-            - name: Deploy with kamal
-                run: kamal deploy
+    - name: Deploy with kamal
+      run: kamal deploy
                 
