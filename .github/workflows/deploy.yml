@@ -27,6 +27,12 @@ jobs:
       with: 
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
         log-public-key: false
+    
+    - name: Install ruby
+      uses: ruby/setup-ruby@v1
+      
+    - name: Install kamal
+      run: gem install kamal
 
     - name: Deploy with kamal
       run: kamal deploy
