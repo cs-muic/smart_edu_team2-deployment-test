@@ -53,77 +53,41 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   # end
 
   test "should not be able to access user index without admin roles" do
-    sign_in(:teacherA)
-    get users_url
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
-
-    sign_in(:studentA)
-    get users_url
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
-
-    sign_in(:one)
-    get users_url
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
+    [ :teacherA, :studentA, :one ].each do |user|
+      sign_in(user)
+      get users_url
+      assert_redirected_to root_path
+      assert_equal "You must be an admin to access requested page.", flash[:alert]
+    end
   end
 
   test "should not be able to access user info page without admin roles" do
-    sign_in(:teacherA)
-    get user_url(@user)
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
-
-    sign_in(:studentA)
-    get user_url(@user)
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
-
-    sign_in(:one)
-    get users_url
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
+    [ :teacherA, :studentA, :one ].each do |user|
+      sign_in(user)
+      get user_url(@user)
+      assert_redirected_to root_path
+      assert_equal "You must be an admin to access requested page.", flash[:alert]
+    end
   end
 
   test "create action should only be accesible by admins" do
-    sign_in(:teacherA)
-    assert_no_difference("User.count") do
-      post users_url, params: { user: { email_address: "newuser@a1.com", password: "aaaaaaaa", password_confirmation: "aaaaaaaa", role: "teacher" } }
+    [ :teacherA, :studentA, :one ].each do |user|
+      sign_in(user)
+      assert_no_difference("User.count") do
+        post users_url, params: { user: { email_address: "newuser@a1.com", password: "aaaaaaaa", password_confirmation: "aaaaaaaa", role: "teacher" } }
+      end
+      assert_redirected_to root_path
+      assert_equal "You must be an admin to access requested page.", flash[:alert]
     end
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
-
-    sign_in(:studentA)
-    assert_no_difference("User.count") do
-      post users_url, params: { user: { email_address: "newuser@a1.com", password: "aaaaaaaa", password_confirmation: "aaaaaaaa", role: "teacher" } }
-    end
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
-
-    sign_in(:one)
-    assert_no_difference("User.count") do
-      post users_url, params: { user: { email_address: "newuser@a1.com", password: "aaaaaaaa", password_confirmation: "aaaaaaaa", role: "teacher" } }
-    end
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
   end
 
   test "edit action should only be accesible by admins" do
-    sign_in(:teacherA)
-    get edit_user_url(@user)
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
-
-    sign_in(:studentA)
-    get edit_user_url(@user)
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
-
-    sign_in(:one)
-    get edit_user_url(@user)
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
+    [ :teacherA, :studentA, :one ].each do |user|
+      sign_in(user)
+      get edit_user_url(@user)
+      assert_redirected_to root_path
+      assert_equal "You must be an admin to access requested page.", flash[:alert]
+    end
   end
 
   test "update action should only be accesible by admins" do
@@ -136,32 +100,16 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "User role updated successfully", flash[:notice]
     assert_equal "teacher", updating_user.role
 
-    sign_in(:teacherA)
-    assert_no_changes(-> { updating_user.reload; updating_user.role }) do
-      patch user_url(updating_user), params: { user: { role: "student" } }
+    [ :teacherA, :studentA, :one ].each do |user|
+      sign_in(user)
+      assert_no_changes(-> { updating_user.reload; updating_user.role }) do
+        patch user_url(updating_user), params: { user: { role: "student" } }
+      end
+      updating_user.reload
+      assert_equal "teacher", updating_user.role
+      assert_redirected_to root_path
+      assert_equal "You must be an admin to access requested page.", flash[:alert]
     end
-    updating_user.reload
-    assert_equal "teacher", updating_user.role
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
-
-    sign_in(:studentA)
-    assert_no_changes(-> { updating_user.reload; updating_user.role }) do
-      patch user_url(updating_user), params: { user: { role: "student" } }
-    end
-    updating_user.reload
-    assert_equal "teacher", updating_user.role
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
-
-    sign_in(:one)
-    assert_no_changes(-> { updating_user.reload; updating_user.role }) do
-      patch user_url(updating_user), params: { user: { role: "student" } }
-    end
-    updating_user.reload
-    assert_equal "teacher", updating_user.role
-    assert_redirected_to root_path
-    assert_equal "You must be an admin to access requested page.", flash[:alert]
 
     sign_in(:adminA)
     patch user_url(updating_user), params: { user: { role: original_role } }
