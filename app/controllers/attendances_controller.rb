@@ -29,13 +29,13 @@ class AttendancesController < ApplicationController
   # POST /attendances or /attendances.json
   def create
     timezone = cookies[:timezone] || "UTC"
-  
+
     Time.use_zone(timezone) do
       permitted_params = params.permit(:user_id)  # Permit only user_id
       permitted_params[:timestamp] = Time.current  # Manually set timestamp in the correct zone
-  
+
       @attendance = Attendance.new(permitted_params)
-  
+
       if @attendance.save
         respond_to do |format|
           format.html { redirect_to new_attendance_path(request.parameters), notice: "Attendance recorded." }
@@ -49,10 +49,10 @@ class AttendancesController < ApplicationController
       end
     end
   end
-  
-  
-  
-  
+
+
+
+
 
   # PATCH/PUT /attendances/1 or /attendances/1.json
   def update
