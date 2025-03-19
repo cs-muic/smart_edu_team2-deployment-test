@@ -35,5 +35,5 @@ jobs:
       run: gem install kamal
 
     - name: Deploy with kamal
-      run: kamal deploy
+      run: kamal deploy -v
                 
