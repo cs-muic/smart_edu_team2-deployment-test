@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
     before_action :require_admin # Only admins can access this controller
+    attr_reader :user # for testings
+    attr_reader :users # for testings
     include Pagy::Backend
     def index
       @pagy, @users = pagy(User.all)
