@@ -42,6 +42,13 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def require_roles_atleast_one(roles_names_array)
+    unless authenticated? && roles_names_array.include?(current_user&.role)
+      flash[:alert] = "You do not have the necessary roles to access requested page."
+      redirect_to root_path
+    end
+  end
+
   helper_method :admin?, :owner?, :teacher?, :student?, :unassigned?
 
   def admin?
