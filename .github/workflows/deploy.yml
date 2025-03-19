@@ -19,6 +19,7 @@ jobs:
     - name: Setup secrets keys
       run: |
         echo "${{ secrets.MASTER_KEY }}" > config/master.key
+        mkdir secret
         echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" > secret/kamal_reg_pass.key
                 
     - name: Setup SSH keys
