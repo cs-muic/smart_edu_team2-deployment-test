@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  namespace :admin do
+    get "subscriptions/index"
+    get "subscriptions/show"
+  end
   get "subscriptions/index"
   get "subscriptions/show"
   get "subscriptions/new"
@@ -28,6 +32,21 @@ Rails.application.routes.draw do
   resources :subscriptions, only: [:index, :new, :create, :show] do
     post 'cancel', on: :member
   end
+  resources :payments, only: [:new, :create, :show]
+  get 'payment_success', to: 'payments#success'
+  get 'payment_failure', to: 'payments#failure'
+  post 'omise_webhook', to: 'payments#webhook'
+
+  namespace :admin do
+    resources :subscriptions, only: [:index, :show] do
+      post 'extend', on: :member
+    end
+  end
+
+  resources :subscriptions, only: [:index, :new, :create, :show] do
+    post 'cancel', on: :member
+  end
+
   resources :payments, only: [:new, :create, :show]
   get 'payment_success', to: 'payments#success'
   get 'payment_failure', to: 'payments#failure'
