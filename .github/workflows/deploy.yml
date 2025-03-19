@@ -1,6 +1,6 @@
 name: Deploy
 
-concurrent: production-deployment
+concurrency: production-deployment
 
 on:
   pull_request:
