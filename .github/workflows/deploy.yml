@@ -38,5 +38,5 @@ jobs:
     #   run: gem install kamal
 
     - name: Deploy with kamal
-      run: kamal deploy
+      run: bundle exec kamal deploy
                 
