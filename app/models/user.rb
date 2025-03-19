@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id              :integer          not null, primary key
+#  email_address   :string           not null
+#  first_name      :string
+#  is_active       :boolean          default(TRUE)
+#  last_name       :string
+#  password_digest :string           not null
+#  role            :string           default("unassigned")
+#  uuid            :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#
+# Indexes
+#
+#  index_users_on_email_address  (email_address) UNIQUE
+#  index_users_on_uuid           (uuid) UNIQUE
+#
 # app/models/user.rb
 class User < ApplicationRecord
   has_secure_password
@@ -54,24 +74,3 @@ class User < ApplicationRecord
     new_record? || password.present?
   end
 end
-
-# == Schema Information
-#
-# Table name: users
-#
-#  id                :integer          not null, primary key
-#  email_address     :string           not null
-#  first_name        :string
-#  last_name         :string
-#  password_digest   :string           not null
-#  role              :string           default("unassigned")
-#  uuid              :string
-#  omise_customer_id :string
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#
-# Indexes
-#
-#  index_users_on_email_address  (email_address) UNIQUE
-#  index_users_on_uuid           (uuid) UNIQUE
-#

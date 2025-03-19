@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema[8.0].define(version: 2025_03_13_184833) do
   create_table "attendances", force: :cascade do |t|
-    t.integer "student_id", null: false
+    t.integer "student_id"
     t.datetime "timestamp"
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
@@ -46,8 +46,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_13_184833) do
   create_table "students", force: :cascade do |t|
     t.string "name"
     t.string "uid", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.datetime "discarded_at"
     t.index ["discarded_at"], name: "index_students_on_discarded_at"
   end
@@ -67,6 +65,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_13_184833) do
   create_table "users", force: :cascade do |t|
     t.string "email_address", null: false
     t.string "password_digest", null: false
+    t.boolean "is_active", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "role", default: "unassigned"
