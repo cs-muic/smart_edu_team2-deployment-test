@@ -47,4 +47,56 @@ class StudentsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to students_url
   end
+
+  test "should not be able to access student index without teacher roles" do
+    [ :adminA, :studentA, :one ].each do |user|
+      sign_in(user)
+      get students_url
+      assert_redirected_to root_path
+      assert_equal "You must be a teacher to access requested page.", flash[:alert]
+    end
+  end
+
+  test "should not be able to access student info page without teacher roles" do
+    [ :adminA, :studentA, :one ].each do |user|
+      sign_in(user)
+      get student_url(@student)
+      assert_redirected_to root_path
+      assert_equal "You must be a teacher to access requested page.", flash[:alert]
+    end
+  end
+
+  test "create action should only be accesible by teachers" do
+    [ :adminA, :studentA, :one ].each do |user|
+      sign_in(user)
+      assert_no_difference("Student.count") do
+        post students_url, params: { student: { name: "newstudent", uid: SecureRandom.uuid } }
+      end
+      assert_redirected_to root_path
+      assert_equal "You must be a teacher to access requested page.", flash[:alert]
+    end
+  end
+
+  test "edit action should only be accesible by teachers" do
+    [ :adminA, :studentA, :one ].each do |user|
+      sign_in(user)
+      get edit_student_url(@student)
+      assert_redirected_to root_path
+      assert_equal "You must be a teacher to access requested page.", flash[:alert]
+    end
+  end
+
+  test "update action should only be accesible by teachers" do
+    [ :adminA, :studentA, :one ].each do |user|
+      sign_in(user)
+      updating_student = @student
+      assert_no_changes(-> { updating_student.reload; updating_student.name }) do
+        patch student_url(updating_student), params: { student: { name: "newstudentA" } }
+      end
+      updating_student.reload
+      assert_equal "Student 1", updating_student.name
+      assert_redirected_to root_path
+      assert_equal "You must be a teacher to access requested page.", flash[:alert]
+    end
+  end
 end
