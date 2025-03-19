@@ -1,0 +1,94 @@
+<div class="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+  <h1 class="text-2xl font-bold mb-6 text-center">Subscribe to Premium Plan</h1>
+
+  <div class="mb-6 p-4 bg-gray-100 rounded">
+    <h2 class="font-bold text-lg mb-2">Premium Plan</h2>
+    <p class="text-gray-700">Access to all features and premium content</p>
+    <p class="text-xl font-bold mt-2">฿599/month</p>
+  </div>
+
+  <%= form_with url: payments_path, method: :post, id: "payment-form", data: { turbo: false } do |form| %>
+    <%= form.hidden_field :plan, value: 'premium' %>
+
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="card_name">Cardholder Name</label>
+      <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" id="card_name" type="text" placeholder="Name on card">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="card_number">Card Number</label>
+      <div id="card-number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"></div>
+    </div>
+
+    <div class="flex mb-4">
+      <div class="w-1/2 mr-2">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="card_expiry">Expiration Date</label>
+        <div id="card-expiry" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"></div>
+      </div>
+      <div class="w-1/2 ml-2">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="card_cvc">CVC</label>
+        <div id="card-cvc" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"></div>
+      </div>
+    </div>
+
+    <div id="error-message" class="text-red-500 mb-4 hidden"></div>
+
+    <%= form.submit "Subscribe Now", class: "w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded cursor-pointer", id: "submit-button" %>
+  <% end %>
+</div>
+
+<%# Add Omise JavaScript library %>
+<script src="https://cdn.omise.co/omise.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Configure Omise
+        Omise.setPublicKey("<%= Rails.env.production? ? Rails.application.credentials.dig(:omise, :public_key) : ENV['OMISE_PUBLIC_KEY'] || 'pkey_test_your_test_public_key' %>");
+
+        // Create the card elements
+        const cardNumberElement = Omise.createElement("card-number");
+        const cardExpiryElement = Omise.createElement("card-expiry");
+        const cardCvcElement = Omise.createElement("card-cvc");
+
+        cardNumberElement.mount("card-number");
+        cardExpiryElement.mount("card-expiry");
+        cardCvcElement.mount("card-cvc");
+
+        // Handle form submission
+        const form = document.getElementById("payment-form");
+        const errorElement = document.getElementById("error-message");
+        const submitButton = document.getElementById("submit-button");
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            // Disable submit button to prevent multiple submissions
+            submitButton.disabled = true;
+
+            // Hide error message
+            errorElement.classList.add("hidden");
+
+            // Create token
+            Omise.createToken("card", {
+                name: document.getElementById("card_name").value
+            }, function(statusCode, response) {
+                if (statusCode !== 200) {
+                    // Display error
+                    errorElement.textContent = response.message;
+                    errorElement.classList.remove("hidden");
+                    submitButton.disabled = false;
+                } else {
+                    // Create a hidden input with the token
+                    const hiddenInput = document.createElement("input");
+                    hiddenInput.setAttribute("type", "hidden");
+                    hiddenInput.setAttribute("name", "omise_token");
+                    hiddenInput.setAttribute("value", response.id);
+                    form.appendChild(hiddenInput);
+
+                    // Submit the form
+                    form.submit();
+                }
+            });
+        });
+    });
+</script>
