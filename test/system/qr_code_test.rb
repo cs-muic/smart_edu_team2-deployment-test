@@ -17,7 +17,7 @@ class QRCodeScannerTest < ApplicationSystemTestCase
 
     # Check that the result is displayed
     assert_text "mocked-qr-code", within: "#result"
-    
+
     # Check that the attendance was recorded successfully
     # You may need to inspect your logs or mock server responses in your test
   end

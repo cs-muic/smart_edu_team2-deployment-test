@@ -29,15 +29,15 @@ class AttendancesController < ApplicationController
   # POST /attendances or /attendances.json
   def create
     timezone = cookies[:timezone] || "UTC"
-  
+
     Time.use_zone(timezone) do
       p = params.permit(:student_id).merge(
         user_id: Current.user&.id,  # Prevent nil user error
         timestamp: Time.current
       )
-  
+
       @attendance = Attendance.new(p)
-  
+
       if @attendance.save
         respond_to do |format|
           format.html { redirect_to new_attendance_path(request.parameters), notice: "Attendance recorded." }
@@ -51,7 +51,7 @@ class AttendancesController < ApplicationController
       end
     end
   end
-  
+
   # PATCH/PUT /attendances/1 or /attendances/1.json
   def update
     respond_to do |format|

@@ -2,7 +2,7 @@ require "test_helper"
 
 class QrcodesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @user = users(:one) 
+    @user = users(:one)
   end
 
   test "should redirect guest users from show" do
@@ -13,9 +13,9 @@ class QrcodesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should show QR code for logged-in user" do
-    sign_in @user 
+    sign_in @user
     get qrcode_url
     assert_response :success
-    assert_match /<svg/, response.body 
+    assert_match /<svg/, response.body
   end
 end
