@@ -52,4 +52,9 @@ class UserTest < ActiveSupport::TestCase
     user = User.new email_address: "a222@bbb.com", password: "password"
     assert_not user.save
   end
+
+  test "should not have empty uuid on create" do
+    user = User.new email_address: "anewuser@abc.com", password: "5555555555", uuid: SecureRandom.uuid
+    assert user.uuid.present?
+  end
 end
