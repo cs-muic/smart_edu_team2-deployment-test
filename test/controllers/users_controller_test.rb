@@ -63,4 +63,16 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
     assert_equal "You must be an admin to access requested page.", flash[:alert]
   end
+
+  test "should not be able to access user info page without admin roles" do
+    sign_in(:teacherA)
+    get user_url(@user)
+    assert_redirected_to root_path
+    assert_equal "You must be an admin to access requested page.", flash[:alert]
+
+    sign_in(:studentA)
+    get user_url(@user)
+    assert_redirected_to root_path
+    assert_equal "You must be an admin to access requested page.", flash[:alert]
+  end
 end
