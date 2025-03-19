@@ -137,7 +137,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "teacher", updating_user.role
 
     sign_in(:teacherA)
-    assert_no_changes(-> {updating_user.reload; updating_user.role} ) do
+    assert_no_changes(-> { updating_user.reload; updating_user.role }) do
       patch user_url(updating_user), params: { user: { role: "student" } }
     end
     updating_user.reload
@@ -146,7 +146,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "You must be an admin to access requested page.", flash[:alert]
 
     sign_in(:studentA)
-    assert_no_changes(-> {updating_user.reload; updating_user.role} ) do
+    assert_no_changes(-> { updating_user.reload; updating_user.role }) do
       patch user_url(updating_user), params: { user: { role: "student" } }
     end
     updating_user.reload
@@ -155,7 +155,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "You must be an admin to access requested page.", flash[:alert]
 
     sign_in(:one)
-    assert_no_changes(-> {updating_user.reload; updating_user.role} ) do
+    assert_no_changes(-> { updating_user.reload; updating_user.role }) do
       patch user_url(updating_user), params: { user: { role: "student" } }
     end
     updating_user.reload
