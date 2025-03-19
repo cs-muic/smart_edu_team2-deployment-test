@@ -62,6 +62,11 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get users_url
     assert_redirected_to root_path
     assert_equal "You must be an admin to access requested page.", flash[:alert]
+
+    sign_in(:one)
+    get users_url
+    assert_redirected_to root_path
+    assert_equal "You must be an admin to access requested page.", flash[:alert]
   end
 
   test "should not be able to access user info page without admin roles" do
@@ -74,5 +79,95 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get user_url(@user)
     assert_redirected_to root_path
     assert_equal "You must be an admin to access requested page.", flash[:alert]
+
+    sign_in(:one)
+    get users_url
+    assert_redirected_to root_path
+    assert_equal "You must be an admin to access requested page.", flash[:alert]
+  end
+
+  test "create action should only be accesible by admins" do
+    sign_in(:teacherA)
+    assert_no_difference("User.count") do
+      post users_url, params: { user: { email_address: "newuser@a1.com", password: "aaaaaaaa", password_confirmation: "aaaaaaaa", role: "teacher" } }
+    end
+    assert_redirected_to root_path
+    assert_equal "You must be an admin to access requested page.", flash[:alert]
+
+    sign_in(:studentA)
+    assert_no_difference("User.count") do
+      post users_url, params: { user: { email_address: "newuser@a1.com", password: "aaaaaaaa", password_confirmation: "aaaaaaaa", role: "teacher" } }
+    end
+    assert_redirected_to root_path
+    assert_equal "You must be an admin to access requested page.", flash[:alert]
+
+    sign_in(:one)
+    assert_no_difference("User.count") do
+      post users_url, params: { user: { email_address: "newuser@a1.com", password: "aaaaaaaa", password_confirmation: "aaaaaaaa", role: "teacher" } }
+    end
+    assert_redirected_to root_path
+    assert_equal "You must be an admin to access requested page.", flash[:alert]
+  end
+
+  test "edit action should only be accesible by admins" do
+    sign_in(:teacherA)
+    get edit_user_url(@user)
+    assert_redirected_to root_path
+    assert_equal "You must be an admin to access requested page.", flash[:alert]
+
+    sign_in(:studentA)
+    get edit_user_url(@user)
+    assert_redirected_to root_path
+    assert_equal "You must be an admin to access requested page.", flash[:alert]
+
+    sign_in(:one)
+    get edit_user_url(@user)
+    assert_redirected_to root_path
+    assert_equal "You must be an admin to access requested page.", flash[:alert]
+  end
+
+  test "update action should only be accesible by admins" do
+    updating_user = users(:two)
+    original_role = updating_user.role
+    sign_in(:adminA)
+    patch user_url(updating_user), params: { user: { role: "teacher" } }
+    updating_user.reload
+    assert_redirected_to users_path
+    assert_equal "User role updated successfully", flash[:notice]
+    assert_equal "teacher", updating_user.role
+
+    sign_in(:teacherA)
+    assert_no_changes(-> {updating_user.reload; updating_user.role} ) do
+      patch user_url(updating_user), params: { user: { role: "student" } }
+    end
+    updating_user.reload
+    assert_equal "teacher", updating_user.role
+    assert_redirected_to root_path
+    assert_equal "You must be an admin to access requested page.", flash[:alert]
+
+    sign_in(:studentA)
+    assert_no_changes(-> {updating_user.reload; updating_user.role} ) do
+      patch user_url(updating_user), params: { user: { role: "student" } }
+    end
+    updating_user.reload
+    assert_equal "teacher", updating_user.role
+    assert_redirected_to root_path
+    assert_equal "You must be an admin to access requested page.", flash[:alert]
+
+    sign_in(:one)
+    assert_no_changes(-> {updating_user.reload; updating_user.role} ) do
+      patch user_url(updating_user), params: { user: { role: "student" } }
+    end
+    updating_user.reload
+    assert_equal "teacher", updating_user.role
+    assert_redirected_to root_path
+    assert_equal "You must be an admin to access requested page.", flash[:alert]
+
+    sign_in(:adminA)
+    patch user_url(updating_user), params: { user: { role: original_role } }
+    updating_user.reload
+    assert_redirected_to users_path
+    assert_equal "User role updated successfully", flash[:notice]
+    assert_equal original_role, updating_user.role
   end
 end
