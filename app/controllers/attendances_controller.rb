@@ -84,3 +84,4 @@ class AttendancesController < ApplicationController
       params.require(:attendance).permit(:student_id, :timestamp, :user_id)
     end
 end
+
