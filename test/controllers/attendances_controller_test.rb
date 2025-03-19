@@ -3,7 +3,7 @@ require "test_helper"
 class AttendancesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @attendance = attendances(:attendance_1)
-    sign_in
+    sign_in(:teacherA)
   end
 
   test "should get index" do

@@ -32,3 +32,38 @@ three:
   email_address: a@a.com
   password_digest: <%= password_digest %>
 
+adminA:
+  email_address: admina1@test.com
+  password_digest: <%= password_digest %>
+  role: admin
+  uuid: <%= SecureRandom.uuid %>
+
+adminB:
+  email_address: adminb1@test.com
+  password_digest: <%= password_digest %>
+  role: admin
+  uuid: <%= SecureRandom.uuid %>
+
+teacherA:
+  email_address: teachera1@test.com
+  password_digest: <%= password_digest %>
+  role: teacher
+  uuid: <%= SecureRandom.uuid %>
+
+teacherB:
+  email_address: teacherb1@test.com
+  password_digest: <%= password_digest %>
+  role: admin
+  uuid: <%= SecureRandom.uuid %>
+
+studentA:
+  email_address: studenta1@test.com
+  password_digest: <%= password_digest %>
+  role: student
+  uuid: <%= SecureRandom.uuid %>
+
+studentB:
+  email_address: studentb1@test.com
+  password_digest: <%= password_digest %>
+  role: student
+  uuid: <%= SecureRandom.uuid %>
