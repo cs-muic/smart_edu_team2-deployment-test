@@ -3,7 +3,8 @@ require "test_helper"
 class AttendancesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @attendance = attendances(:attendance_1)
-    sign_in
+    @user = users(:some_user) # Update with a valid fixture
+    sign_in @user if defined?(sign_in) # Devise helper
   end
 
   test "should get index" do
@@ -17,10 +18,19 @@ class AttendancesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create attendance" do
-    assert_difference("Attendance.count") do
-      post attendances_url, params: { student_id: @attendance.student_id }
-      puts @response.body
+    assert_difference("Attendance.count", 1) do
+      post attendances_url, params: { user_id: @user.id }, as: :json
     end
+    assert_response :created
+    assert_match /Attendance successfully recorded/, @response.body
+  end
+
+  test "should not create attendance with invalid params" do
+    assert_no_difference("Attendance.count") do
+      post attendances_url, params: { user_id: nil }, as: :json
+    end
+    assert_response :unprocessable_entity
+    assert_match /User must exist/, @response.body
   end
 
   test "should show attendance" do
@@ -34,15 +44,21 @@ class AttendancesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update attendance" do
-    patch attendance_url(@attendance), params: { attendance: { student_id: @attendance.student_id, timestamp: @attendance.timestamp, user_id: @attendance.user_id } }
+    patch attendance_url(@attendance), params: { attendance: { user_id: @user.id } }
     assert_redirected_to attendance_url(@attendance)
+    follow_redirect!
+    assert_match /Attendance was successfully updated/, response.body
+  end
+
+  test "should not update attendance with invalid params" do
+    patch attendance_url(@attendance), params: { attendance: { user_id: nil } }
+    assert_response :unprocessable_entity
   end
 
   test "should destroy attendance" do
     assert_difference("Attendance.count", -1) do
       delete attendance_url(@attendance)
     end
-
     assert_redirected_to attendances_url
   end
 end
